@@ -109,18 +109,31 @@ int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAf
         }
     }
 
-
-    if (diceAffinityValue >= 6 - catAndUserAffinity) {
-        printf("냄비 쪽으로 움직입니다!\n");
-        if (posCatInitval < BWL_PO) {
-            (posCatInitval)++;
-        }
-    } else {
-        printf("집 쪽으로 이동합니다!\n");
+    if (getCatMood == 0) {
+        printf("기분이 매우 나쁜 쫀떡은(는) 집으로 향합니다.\n");
         if (posCatInitval > 1) {
             (posCatInitval)--;
         }
+    } else if (getCatMood == 1) {
+        printf("쫀떡은(는) 심심해서 스크래처 쪽으로 이동합니다.\n");
+    } else if (getCatMood == 2) {
+        printf("쫀떡은(는) 기분좋게 식빵을 굽고 있습니다.\n");
+    } else if (getCatMood == 3) {
+        printf("쫀떡은(는) 골골송을 부르며 수프를 만들러 갑니다.\n");
     }
+    
+
+    // if (diceAffinityValue >= 6 - catAndUserAffinity) {
+    //     printf("냄비 쪽으로 움직입니다!\n");
+    //     if (posCatInitval < BWL_PO) {
+    //         (posCatInitval)++;
+    //     }
+    // } else {
+    //     printf("집 쪽으로 이동합니다!\n");
+    //     if (posCatInitval > 1) {
+    //         (posCatInitval)--;
+    //     }
+    // }
 
     if (posCatInitval == BWL_PO) {
         switch (diceSoupValue) {
