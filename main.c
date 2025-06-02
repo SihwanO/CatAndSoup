@@ -15,14 +15,16 @@ scanf > scanf_s
 */
 
 void getCatIntro(char* getCatName);
-void getUserStat(int getCatMadeSoupValue, int catAndUserAffinity, int diceAffinityValue);
+void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
 int main(void) {
-    int getCatMadeSoupValue = 0;
-    int catAndUserAffinity = 2;
-    int posCatInitval = 1;
-    int posCatDefault = 1;
+    int getCatMadeSoupValue = 0; // 고양이가 만든 수프 갯수
+    int catAndUserAffinity = 2; // 집사 친밀도
+    int getCpPoint = 0; // CP 포인트
+    int getCatMood = 0; // 고양이 기분
+    int posCatInitval = 1; // 고양이 초기 위치
+    int posCatDefault = 1; // 고양이 기존 위치 (전위치)
     char getCatName[100] = "쫀떡";
     srand(time(NULL));
     
@@ -33,7 +35,7 @@ int main(void) {
     while (1) {
         int diceAffinityValue = rand() % 6 + 1;
         posCatDefault = posCatInitval;
-        getUserStat(getCatMadeSoupValue, catAndUserAffinity, diceAffinityValue);
+        getUserStat(getCatMadeSoupValue, getCpPoint, getCatMood, catAndUserAffinity, diceAffinityValue);
         sleep(5);
 
         printf("%s 이동 : 집사와 친밀할수록 냄비 쪽으로 갈 확률이 높아집니다.\n", getCatName);
@@ -136,9 +138,19 @@ void getCatIntro(char* getCatName) {
     printf("야옹이의 이름은 %s 입니다.\n", getCatName);
 }
 
-void getUserStat(int getCatMadeSoupValue, int catAndUserAffinity, int diceAffinityValue) {
+void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue) {
     printf("============ 현재 상태 ============\n");
     printf("현재까지 만든 수프 : %d개\n", getCatMadeSoupValue);
+    printf("CP: %d\n", getCpPoint);
+    printf("쫀떡이 기분(0~3): %d\n", getCatMood);
+
+    switch (getCatMood) {
+        case 0: printf("기분이 매우 나쁩니다.\n"); break;
+        case 1: printf("심심해합니다.\n"); break;
+        case 2: printf("식빵을 굽습니다.\n"); break;
+        case 3: printf("골골송을 부릅니다.\n"); break;
+    }
+
     printf("집사와의 관계(0~4) : %d\n", catAndUserAffinity);
 
     switch (catAndUserAffinity) {
