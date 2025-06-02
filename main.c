@@ -16,6 +16,7 @@ scanf > scanf_s
 
 void getCatIntro(char* getCatName);
 void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue);
+int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
 int main(void) {
@@ -38,34 +39,8 @@ int main(void) {
         getUserStat(getCatMadeSoupValue, getCpPoint, getCatMood, catAndUserAffinity, diceAffinityValue);
         sleep(5);
 
-        printf("%s 이동 : 집사와 친밀할수록 냄비 쪽으로 갈 확률이 높아집니다.\n", getCatName);
-        printf("주사위 눈이 %d 이상이면 냄비 쪽으로 이동합니다.\n", 6 - catAndUserAffinity);
-        printf("주사위를 굴립니다. 또르륵...\n");
-        printf("%d이(가) 나왔습니다!\n", diceAffinityValue);
-
-        if (diceAffinityValue >= 6 - catAndUserAffinity) {
-            printf("냄비 쪽으로 움직입니다!\n");
-            if (posCatInitval < BWL_PO) {
-                (posCatInitval)++;
-            }
-        } else {
-            printf("집 쪽으로 이동합니다!\n");
-            if (posCatInitval > 1) {
-                (posCatInitval)--;
-            }
-        }
-
         int diceSoupValue = rand() % 3;
-        if (posCatInitval == BWL_PO) {
-            switch (diceSoupValue) {
-                case 0: printf("%s이(가) 감자수프 만들었습니다!\n", getCatName); break;
-                case 1: printf("%s이(가) 양송이 수프 만들었습니다!\n", getCatName); break;
-                case 2: printf("%s이(가) 브로콜리 수프 만들었습니다!\n", getCatName); break;
-            }
-            printf("현재까지 만든 수프: %d개\n", ++getCatMadeSoupValue);
-        } else if (posCatInitval == HME_POS) {
-            printf("%s은(는) 자신의 집에서 편안함을 느낍니다.\n", getCatName);
-        }
+        getStatsNextCatMoodAction(getCatMood, catAndUserAffinity, diceAffinityValue, posCatInitval, diceSoupValue, getCatMadeSoupValue);
         printf("\n");
         sleep(5); 
 
@@ -162,6 +137,39 @@ void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int ca
     }
     
     printf("===================================\n\n");
+}
+
+int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue) {
+    printf("쫀떡이 이동 : 집사와 친밀할수록 냄비 쪽으로 갈 확률이 높아집니다.\n");
+        printf("주사위 눈이 %d 이상이면 냄비 쪽으로 이동합니다.\n", 6 - catAndUserAffinity);
+        printf("주사위를 굴립니다. 또르륵...\n");
+        printf("%d이(가) 나왔습니다!\n", diceAffinityValue);
+
+        if (diceAffinityValue >= 6 - catAndUserAffinity) {
+            printf("냄비 쪽으로 움직입니다!\n");
+            if (posCatInitval < BWL_PO) {
+                (posCatInitval)++;
+            }
+        } else {
+            printf("집 쪽으로 이동합니다!\n");
+            if (posCatInitval > 1) {
+                (posCatInitval)--;
+            }
+        }
+
+        if (posCatInitval == BWL_PO) {
+            switch (diceSoupValue) {
+                case 0: printf("쫀떡이(가) 감자수프 만들었습니다!\n"); break;
+                case 1: printf("쫀떡이(가) 양송이 수프 만들었습니다!\n"); break;
+                case 2: printf("쫀떡이(가) 브로콜리 수프 만들었습니다!\n"); break;
+            }
+            printf("현재까지 만든 수프: %d개\n", ++getCatMadeSoupValue);
+        } else if (posCatInitval == HME_POS) {
+            printf("쫀떡이은(는) 자신의 집에서 편안함을 느낍니다.\n");
+        }
+        printf("\n");
+
+    return posCatInitval;
 }
 
 void addCatRoom(int posCatInitval, int posCatDefault) {
