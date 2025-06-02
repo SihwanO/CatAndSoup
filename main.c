@@ -24,7 +24,7 @@ int main(void) {
     int getCatMadeSoupValue = 0; // 고양이가 만든 수프 갯수
     int catAndUserAffinity = 2; // 집사 친밀도
     int getCpPoint = 0; // CP 포인트
-    int getCatMood = 0; // 고양이 기분
+    int getCatMood = 3; // 고양이 기분
     int posCatInitval = 1; // 고양이 초기 위치
     int posCatDefault = 1; // 고양이 기존 위치 (전위치)
     char getCatName[100] = "쫀떡";
@@ -41,7 +41,7 @@ int main(void) {
         sleep(5);
 
         int diceSoupValue = rand() % 3;
-        posCatInitval = getStatsNextCatMoodAction(getCatMood, catAndUserAffinity, diceAffinityValue, posCatInitval, diceSoupValue, getCatMadeSoupValue);
+        getCatMood = posCatInitval = getStatsNextCatMoodAction(getCatMood, catAndUserAffinity, diceAffinityValue, posCatInitval, diceSoupValue, getCatMadeSoupValue);
         printf("\n");
         sleep(5); 
 
@@ -98,10 +98,17 @@ void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int ca
 }
 
 int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue) {
-    printf("쫀떡이 이동 : 집사와 친밀할수록 냄비 쪽으로 갈 확률이 높아집니다.\n");
-    printf("주사위 눈이 %d 이상이면 냄비 쪽으로 이동합니다.\n", 6 - catAndUserAffinity);
+    printf("6-%d: 주사위 눈이 %d이하이면 그냥 기분이 나빠집니다..\n", catAndUserAffinity, 6 - catAndUserAffinity);
     printf("주사위를 굴립니다. 또르륵...\n");
     printf("%d이(가) 나왔습니다!\n", diceAffinityValue);
+
+    if (getCatMood > 0 || getCatMood < 4) {
+        if (6 - catAndUserAffinity > diceSoupValue) {
+            printf("쫀떡의 기분이 나빠집니다: %d->%d\n", getCatMood, getCatMood - 1);
+            --getCatMood;
+        }
+    }
+
 
     if (diceAffinityValue >= 6 - catAndUserAffinity) {
         printf("냄비 쪽으로 움직입니다!\n");
