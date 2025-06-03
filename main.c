@@ -18,7 +18,7 @@ scanf > scanf_s
 void getCatIntro(char* getCatName);
 void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue);
 int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue);
-int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity);
+int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, int purchasedItems[5]);
 int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
@@ -37,7 +37,7 @@ int main(void) {
     
     char shopItems[5][20] = { // 아이템 목록
         "아무것도 사지 않음",
-        "장난감 줘",
+        "장난감 쥐",
         "레이저 포인터",
         "스크래처",
         "캣 타워"
@@ -66,7 +66,7 @@ int main(void) {
         
         int catAndUserBetweenInter = 0;
         int dice = rand() % 6 + 1;
-        catAndUserAffinity = getUserInput(dice, catAndUserBetweenInter, catAndUserAffinity);
+        catAndUserAffinity = getUserInput(dice, catAndUserBetweenInter, catAndUserAffinity, purchasedItems);
 
         int PrvPoint = (MAX(0, getCatMood - 1) + catAndUserAffinity);
         getCpPoint += PrvPoint;
@@ -173,11 +173,30 @@ int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAf
     return posCatInitval;
 }
 
-int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity) {
-    printf("어떤 상호작용을 하시겠습니까?   0. 아무것도 하지 않음   1. 긁어 주기\n");
+int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, int purchasedItems[5]) {
+    printf("어떤 상호작용을 하시겠습니까?\n");
+    printf("    0. 아무것도 하지 않음\n");
+    printf("    1. 긁어 주기\n");
+
+    int inputNum = 2;
+    int toyItemsMouse = 0; // 장난감 쥐
+    int toyItemsLaserPointer = 0; // 레이저 포인터
+
+    if (purchasedItems[1]) {
+        printf("    %d. 장난감 쥐로 놀아 주기\n", inputNum);
+        toyItemsMouse = inputNum;
+        inputNum++;
+    }
+    
+    if (purchasedItems[2]) {
+        printf("    %d. 레이저 포인터로 놀아 주기\n", inputNum);
+        toyItemsLaserPointer = inputNum;
+        inputNum++;
+    }
+
     printf(">> ");
 
-    while (scanf("%d", &catAndUserBetweenInter) != 1 || (catAndUserBetweenInter != 0 && catAndUserBetweenInter != 1)) {
+    while (scanf("%d", &catAndUserBetweenInter) != 1 || (catAndUserBetweenInter < 0 || catAndUserBetweenInter >= inputNum)) {
         while (getchar() != '\n');
         printf(">> ");
     }
@@ -217,7 +236,12 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity) {
             printf("친밀도는 그대로입니다.\n");
         } 
         printf("현재 친밀도: %d\n", catAndUserAffinity);
+    } else if (catAndUserBetweenInter == toyItemsMouse) {
+        printf("장난감 쥐로 쫀떡이와 놀아 주었습니다.\n");
+    } else if (catAndUserBetweenInter == toyItemsLaserPointer) {
+        printf("레이저 포인터로 쫀떡이와 놀아 주었습니다.\n");
     }
+    
 
     return catAndUserAffinity;
 }
