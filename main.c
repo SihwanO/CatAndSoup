@@ -22,10 +22,13 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity);
 int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
+int scratcher_POS = 0; // 스크래처 위치
+int catTowerPOS = 0; // 캣타워 위치
+
 int main(void) {
     int getCatMadeSoupValue = 0; // 고양이가 만든 수프 갯수
     int catAndUserAffinity = 2; // 집사 친밀도
-    int getCpPoint = 0; // CP 포인트
+    int getCpPoint = 7; // CP 포인트
     int getCatMood = 3; // 고양이 기분
     int posCatInitval = 1; // 고양이 초기 위치
     int posCatDefault = 1; // 고양이 기존 위치 (전위치)
@@ -34,10 +37,10 @@ int main(void) {
     
     char shopItems[5][20] = { // 아이템 목록
         "아무것도 사지 않음",
-        "장난감 줘: 1 CP",
-        "레이저 포인터: 2 CP",
-        "스크래처: 4 CP",
-        "캣 타워: 6 CP"
+        "장난감 줘",
+        "레이저 포인터",
+        "스크래처",
+        "캣 타워"
     };
     int itemPrice[5] = {0, 1, 2, 4, 6}; // 아이템 가격
     int purchasedItems[5] = {0, 0, 0, 0, 0}; // 구매한 아이템
@@ -222,11 +225,13 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity) {
 int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint) {
     printf("상점에서 물건을 살 수 있습니다.\n");
     printf("어떤 물건을 구매할까요?\n");
-    printf("    0. 아무 것도 사지 않는다.\n");
-    printf("    1. 장난감 줘: 1 CP\n");
-    printf("    2. 레이저 포인터: 2 CP\n");
-    printf("    3. 스캐래처: 4 CP\n");
-    printf("    4. 캣 타워: 6 CP\n");
+    for (int i = 0; i < 5; i++) {
+        if (purchasedItems[i] > 0) {
+            printf("    %d. %s: %d CP (품절) \n", i, shopItems[i], itemPrice[i]);
+        } else {
+            printf("    %d. %s: %d CP\n", i, shopItems[i], itemPrice[i]);
+        }
+    }
     printf(">> ");
 
     while(scanf("%d", &getShopChoice) != 1 || (getShopChoice < 0 || getShopChoice > 4)) {
@@ -237,12 +242,20 @@ int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int pur
     if (getShopChoice == 0) {
         printf("아무것도 사지 않습니다.\n");
     } else if (getShopChoice >= 1 && getShopChoice <= 4) {
-        if (getCpPoint < itemPrice[getShopChoice]) {
+        if (purchasedItems[getShopChoice] > 0) {
+            printf("%s는 이미 구매했습니다.\n", shopItems[getShopChoice]);
+        } else if (getCpPoint < itemPrice[getShopChoice]) {
             printf("CP가 부족합니다. 구매할 수 없습니다.\n");
         } else {
             purchasedItems[getShopChoice]++;
             getCpPoint -= itemPrice[getShopChoice];
-            printf("%s를(을) 구매했습니다. 현재 CP: %d\n", shopItems[getShopChoice], getCpPoint);
+            printf("%s를 구매했습니다. 현재 보유 CP: %d\n", shopItems[getShopChoice], getCpPoint);
+
+            if (getShopChoice == 3) {
+                scratcher_POS = rand() % (BWL_PO - HME_POS - 1) + HME_POS + 1;
+            } else if (getShopChoice == 4) {
+                catTowerPOS = rand() % (BWL_PO - HME_POS - 1) + HME_POS + 1;
+            }
         }
     }
 
@@ -260,6 +273,10 @@ void addCatRoom(int posCatInitval, int posCatDefault) {
                 printf("H");
             } else if (x == BWL_PO && y == 1) {
                 printf("B");
+            }  else if (x == scratcher_POS && y == 1) {
+                printf("S");
+            } else if (x == catTowerPOS && y == 1) {
+                printf("T");
             } else if (x == posCatInitval && y == 2) {
                 printf("C");
             } else if (x == posCatDefault && y == 2 && posCatDefault != posCatInitval) { 
