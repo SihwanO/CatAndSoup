@@ -1,6 +1,7 @@
 #define ROOM_WIDTH 10
 #define HME_POS 1
 #define BWL_PO (ROOM_WIDTH - 2)
+#define MAX(a, b) ((a) >= (b) ? (a) : (b))
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,6 +53,11 @@ int main(void) {
         int dice = rand() % 6 + 1;
         catAndUserAffinity = getUserInput(dice, catAndUserBetweenInter, catAndUserAffinity);
 
+        int PrvPoint = (MAX(0, getCatMood - 1) + catAndUserAffinity);
+        getCpPoint += PrvPoint;
+        printf("쫀떡의 기분과 친밀도에 따라서 CP가 %d 포인트 생산되었습니다.\n", PrvPoint);
+        printf("보유 CP: %d\n", getCpPoint);
+
         sleep(2); 
         system("clear");
     }
@@ -74,7 +80,7 @@ void getCatIntro(char* getCatName) {
 void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue) {
     printf("============ 현재 상태 ============\n");
     printf("현재까지 만든 수프 : %d개\n", getCatMadeSoupValue);
-    printf("CP: %d\n", getCpPoint);
+    printf("CP: %d 포인트\n", getCpPoint);
     printf("쫀떡이 기분(0~3): %d\n", getCatMood);
 
     switch (getCatMood) {
