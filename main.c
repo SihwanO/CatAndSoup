@@ -19,6 +19,7 @@ void getCatIntro(char* getCatName);
 void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue);
 int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue);
 int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity);
+int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
 int main(void) {
@@ -28,7 +29,18 @@ int main(void) {
     int getCatMood = 3; // 고양이 기분
     int posCatInitval = 1; // 고양이 초기 위치
     int posCatDefault = 1; // 고양이 기존 위치 (전위치)
+    int getShopChoice = 0; // 상점 선택
     char getCatName[100] = "쫀떡";
+    
+    char shopItems[5][20] = { // 아이템 목록
+        "아무것도 사지 않음",
+        "장난감 줘: 1 CP",
+        "레이저 포인터: 2 CP",
+        "스크래처: 4 CP",
+        "캣 타워: 6 CP"
+    };
+    int itemPrice[5] = {0, 1, 2, 4, 6}; // 아이템 가격
+    int purchasedItems[5] = {0, 0, 0, 0, 0}; // 구매한 아이템
     srand(time(NULL));
     
     getCatIntro(getCatName);
@@ -57,6 +69,8 @@ int main(void) {
         getCpPoint += PrvPoint;
         printf("쫀떡의 기분과 친밀도에 따라서 CP가 %d 포인트 생산되었습니다.\n", PrvPoint);
         printf("보유 CP: %d\n", getCpPoint);
+
+        getCpPoint = openShop(getShopChoice, shopItems, itemPrice, purchasedItems, getCpPoint);
 
         sleep(2); 
         system("clear");
@@ -203,6 +217,36 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity) {
     }
 
     return catAndUserAffinity;
+}
+
+int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint) {
+    printf("상점에서 물건을 살 수 있습니다.\n");
+    printf("어떤 물건을 구매할까요?\n");
+    printf("    0. 아무 것도 사지 않는다.\n");
+    printf("    1. 장난감 줘: 1 CP\n");
+    printf("    2. 레이저 포인터: 2 CP\n");
+    printf("    3. 스캐래처: 4 CP\n");
+    printf("    4. 캣 타워: 6 CP\n");
+    printf(">> ");
+
+    while(scanf("%d", &getShopChoice) != 1 || (getShopChoice < 0 || getShopChoice > 4)) {
+        while (getchar() != '\n');
+        printf(">> ");
+    }
+
+    if (getShopChoice == 0) {
+        printf("아무것도 사지 않습니다.\n");
+    } else if (getShopChoice >= 1 && getShopChoice <= 4) {
+        if (getCpPoint < itemPrice[getShopChoice]) {
+            printf("CP가 부족합니다. 구매할 수 없습니다.\n");
+        } else {
+            purchasedItems[getShopChoice]++;
+            getCpPoint -= itemPrice[getShopChoice];
+            printf("%s를(을) 구매했습니다. 현재 CP: %d\n", shopItems[getShopChoice], getCpPoint);
+        }
+    }
+
+    return getCpPoint;
 }
 
 void addCatRoom(int posCatInitval, int posCatDefault) {
