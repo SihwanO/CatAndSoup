@@ -16,20 +16,21 @@ scanf > scanf_s
 */
 
 void getCatIntro(char* getCatName);
-void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue);
-int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue);
+void getUserStat(int getCatMadeSoupValue, int getCpPoint, int catAndUserAffinity, int diceAffinityValue);
+int getStatsNextCatMoodAction(int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue);
 int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, int purchasedItems[5]);
 int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
 int scratcher_POS = 0; // 스크래처 위치
 int catTowerPOS = 0; // 캣타워 위치
+int getCatMood = 3; // 고양이 기분
 
 int main(void) {
-    int getCatMadeSoupValue = 0; // 고양이가 만든 수프 갯수
+    int gameTurn = 0; // 게임 턴
     int catAndUserAffinity = 2; // 집사 친밀도
     int getCpPoint = 7; // CP 포인트
-    int getCatMood = 3; // 고양이 기분
+    int getCatMadeSoupValue = 0; // 고양이가 만든 수프 갯수
     int posCatInitval = 1; // 고양이 초기 위치
     int posCatDefault = 1; // 고양이 기존 위치 (전위치)
     int getShopChoice = 0; // 상점 선택
@@ -53,11 +54,11 @@ int main(void) {
     while (1) {
         int diceAffinityValue = rand() % 6 + 1;
         posCatDefault = posCatInitval;
-        getUserStat(getCatMadeSoupValue, getCpPoint, getCatMood, catAndUserAffinity, diceAffinityValue);
+        getUserStat(getCatMadeSoupValue, getCpPoint, catAndUserAffinity, diceAffinityValue);
         sleep(5);
 
         int diceSoupValue = rand() % 3;
-        getCatMood = posCatInitval = getStatsNextCatMoodAction(getCatMood, catAndUserAffinity, diceAffinityValue, posCatInitval, diceSoupValue, getCatMadeSoupValue);
+        posCatInitval = getStatsNextCatMoodAction(catAndUserAffinity, diceAffinityValue, posCatInitval, diceSoupValue, getCatMadeSoupValue);
         printf("\n");
         sleep(5); 
 
@@ -94,7 +95,7 @@ void getCatIntro(char* getCatName) {
     printf("야옹이의 이름은 %s 입니다.\n", getCatName);
 }
 
-void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int catAndUserAffinity, int diceAffinityValue) {
+void getUserStat(int getCatMadeSoupValue, int getCpPoint, int catAndUserAffinity, int diceAffinityValue) {
     printf("============ 현재 상태 ============\n");
     printf("현재까지 만든 수프 : %d개\n", getCatMadeSoupValue);
     printf("CP: %d 포인트\n", getCpPoint);
@@ -120,7 +121,7 @@ void getUserStat(int getCatMadeSoupValue, int getCpPoint, int getCatMood, int ca
     printf("===================================\n\n");
 }
 
-int getStatsNextCatMoodAction(int getCatMood, int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue) {
+int getStatsNextCatMoodAction(int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue) {
     printf("6-%d: 주사위 눈이 %d이하이면 그냥 기분이 나빠집니다..\n", catAndUserAffinity, 6 - catAndUserAffinity);
     printf("주사위를 굴립니다. 또르륵...\n");
     printf("%d이(가) 나왔습니다!\n", diceAffinityValue);
@@ -178,7 +179,7 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, i
     printf("    0. 아무것도 하지 않음\n");
     printf("    1. 긁어 주기\n");
 
-    int inputNum = 2;
+    int inputNum = 2; // 초기 상호작용 번호
     int toyItemsMouse = 0; // 장난감 쥐
     int toyItemsLaserPointer = 0; // 레이저 포인터
 
@@ -203,45 +204,67 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, i
 
     if (catAndUserBetweenInter == 1) {
         printf("쫀떡이의 턱을 긁어주었습니다.\n");
-        printf("2/6의 확률로 친밀도가 높아집니다.\n");
-        printf("주사위를 굴립니다. 또르륵...\n");
-        printf("%d이(가) 나왔습니다!\n", dice);
+        printf("쫀떡이의 기분은 그대로입니다: %d\n", getCatMood);
         
-        if (dice >= 5) {
-            if (catAndUserAffinity < 4) {
-                ++catAndUserAffinity;
-                printf("친밀도가 높아집니다.\n");
-            } else {
-                printf("다행히 친밀도가 떨어지지 않았습니다.\n");
-            }
+        if (dice >= 5 && catAndUserAffinity < 4) {
+            ++catAndUserAffinity;
+            printf("친밀도가 높아집니다.\n");
         } else {
             printf("친밀도는 그대로입니다.\n");
         } 
-        printf("현재 친밀도: %d\n", catAndUserAffinity);
+        // printf("현재 친밀도: %d\n", catAndUserAffinity);
 
     } else if (catAndUserBetweenInter == 0) {
         printf("아무것도 하지 않습니다.\n");
-        printf("4/6의 확률로 친밀도가 떨어집니다.\n");
-        printf("주사위를 굴립니다. 또르륵...\n");
-        printf("%d이(가) 나왔습니다!\n", dice);
 
-        if (dice <= 4) {
-            if (catAndUserAffinity <= 0) {
-                printf("다행히 친밀도가 떨어지지 않았습니다.\n");
-            } else {
-                --catAndUserAffinity;
-                printf("친밀도가 떨어집니다.\n");
-            }
+        if (getCatMood > 0 || getCatMood < 4) {
+            printf("쫀떡이의 기분이 나빠집니다: %d->%d\n", getCatMood, getCatMood - 1);
+            --getCatMood;
+        }
+
+        if (dice < 5 && catAndUserAffinity > 0) {
+            --catAndUserAffinity;
+            printf("친밀도가 떨어집니다.\n");
         } else {
             printf("친밀도는 그대로입니다.\n");
         } 
-        printf("현재 친밀도: %d\n", catAndUserAffinity);
+        // printf("현재 친밀도: %d\n", catAndUserAffinity);
+        
     } else if (catAndUserBetweenInter == toyItemsMouse) {
         printf("장난감 쥐로 쫀떡이와 놀아 주었습니다.\n");
+        
+        if (getCatMood > 0 || getCatMood < 4) {
+            printf("쫀떡이의 기분이 조금 좋아졌습니다: %d->%d\n", getCatMood, getCatMood + 1);
+            ++getCatMood;
+        }
+
+        if (dice >= 4 && catAndUserAffinity < 4) {
+            ++catAndUserAffinity;
+            printf("친밀도가 높아집니다.\n");
+        } else {
+            printf("친밀도는 그대로입니다.\n");
+        } 
+        // printf("현재 친밀도: %d\n", catAndUserAffinity);
+
     } else if (catAndUserBetweenInter == toyItemsLaserPointer) {
-        printf("레이저 포인터로 쫀떡이와 놀아 주었습니다.\n");
+        printf("레이저 포인터로 쫀떡이와 신나게 놀아 주었습니다.\n");
+
+        if (getCatMood > 0 || getCatMood < 4) {
+            printf("쫀떡이의 기분이 꽤 좋아졌습니다: %d->%d\n", getCatMood, getCatMood + 2);
+            getCatMood += 2;
+
+            if (getCatMood > 4) {
+                getCatMood = 4;
+            }
+        }
+
+        if (dice >= 2 && catAndUserAffinity < 4) {
+            ++catAndUserAffinity;
+            printf("친밀도가 높아집니다.\n");
+        } else {
+            printf("친밀도는 그대로입니다.\n");
+        }
     }
-    
 
     return catAndUserAffinity;
 }
