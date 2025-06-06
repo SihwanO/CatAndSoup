@@ -20,6 +20,7 @@ void getUserStat(int getCatMadeSoupValue, int getCpPoint, int catAndUserAffinity
 int getStatsNextCatMoodAction(int catAndUserAffinity, int diceAffinityValue, int posCatInitval, int diceSoupValue, int getCatMadeSoupValue, int purchasedItems[5], int gameHomeTurn);
 int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, int purchasedItems[5]);
 int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int purchasedItems[5], int getCpPoint);
+void suddenQuest(int getCatMood);
 void addCatRoom(int posCatInitval, int posCatDefault);
 
 int scratcher_POS = 0; // 스크래처 위치
@@ -44,6 +45,7 @@ int main(void) {
         "스크래처",
         "캣 타워"
     };
+
     int itemPrice[5] = {0, 1, 2, 4, 6}; // 아이템 가격
     int purchasedItems[5] = {0, 0, 0, 0, 0}; // 구매한 아이템
     srand(time(NULL));
@@ -53,6 +55,8 @@ int main(void) {
     system("clear");
 
     while (1) {
+        gameTurn++;
+
         int diceAffinityValue = rand() % 6 + 1;
         posCatDefault = posCatInitval;
         getUserStat(getCatMadeSoupValue, getCpPoint, catAndUserAffinity, diceAffinityValue);
@@ -76,6 +80,11 @@ int main(void) {
         printf("보유 CP: %d\n", getCpPoint);
 
         getCpPoint = openShop(getShopChoice, shopItems, itemPrice, purchasedItems, getCpPoint);
+
+        if (gameTurn == 3) {
+            suddenQuest(getCatMood);
+            sleep(2);
+        }
 
         sleep(2); 
         system("clear");
@@ -348,6 +357,47 @@ int openShop(int getShopChoice, char shopItems[5][20], int itemPrice[5], int pur
     }
 
     return getCpPoint;
+}
+
+void suddenQuest(int getCatMood) {
+    printf("============ 돌발 퀘스트 발생!! ============\n\n");
+    
+    int hidingSpot = rand() % 3 + 1;
+    int playerGuess;
+
+    printf("쫀떡이가 숨어버렸습니다! 어디에 있을까요?\n");
+    printf("1. 커튼 뒤\n2. 상자 안\n3. 소파 밑\n");
+    printf(">> ");
+    
+    while (scanf("%d", &playerGuess) != 1 || (playerGuess < 1 || playerGuess > 3)) {
+        while (getchar() != '\n');
+        printf(">> ");
+    }
+
+    if (playerGuess == hidingSpot) {
+        printf("쫀떡이를 찾았습니다!\n");
+        printf("쫀떡이가 나와서 꾹꾹이를 합니다.\n");
+        printf("쫀떡이가 기뻐하며 기분이 조금 좋아집니다: %d->%d.\n\n", getCatMood, getCatMood + 1);
+        ++getCatMood;
+        
+        if (getCatMood > 3) {
+            getCatMood = 3;
+        }
+
+    } else {
+        printf("쫀떡이를 못 찾았습니다.\n");
+        printf("쫀떡이는 %d번에 슬금슬금 나옵니다.\n", hidingSpot);
+        printf("쫀떡이가 서운해 하며 기분이 조금 나빠집니다: %d->%d.\n\n", getCatMood, getCatMood - 1);
+        --getCatMood;
+        
+        if (getCatMood < 0) {
+            getCatMood = 0;
+        }
+    }
+
+    printf("============ 돌발 퀘스트 종료 ============\n");
+    
+    sleep(2);
 }
 
 void addCatRoom(int posCatInitval, int posCatDefault) {
