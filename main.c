@@ -156,15 +156,40 @@ int getStatsNextCatMoodAction(int catAndUserAffinity, int diceAffinityValue, int
             if (getCatMood > 0 || getCatMood < 4) {
                 --getCatMood;
             }
+        } else {
+            int dist;
+
+            if (purchasedItems[3] && !purchasedItems[4]) {
+                dist = scratcher_POS;
+            } else if (!purchasedItems[3] && purchasedItems[4]) {
+                dist = catTowerPOS;
+            } else {
+                int distScratcher, distCatTower;
+
+                if (posCatInitval > scratcher_POS)
+                    distScratcher = posCatInitval - scratcher_POS;
+                else
+                    distScratcher = scratcher_POS - posCatInitval;
+
+                if (posCatInitval > catTowerPOS)
+                    distCatTower = posCatInitval - catTowerPOS;
+                else
+                    distCatTower = catTowerPOS - posCatInitval;
+
+                if (distScratcher <= distCatTower)
+                    dist = scratcher_POS;
+                else
+                    dist = catTowerPOS;
+                }
+                if (posCatInitval > 1 || posCatInitval < BWL_PO) {
+                    if (posCatInitval < dist) {
+                        posCatInitval++;
+                    } else if (posCatInitval > dist) {
+                        posCatInitval--;
+                    }
+                } 
         }
 
-        if (posCatInitval > 1 || posCatInitval < BWL_PO) {
-            if (posCatInitval < scratcher_POS) {
-                posCatInitval++;
-            } else if (posCatInitval < catTowerPOS) {
-                posCatInitval++;
-            }    
-        } 
 
     } else if (getCatMood == 2) {
         printf("쫀떡은(는) 기분좋게 식빵을 굽고 있습니다.\n");
@@ -396,7 +421,7 @@ void suddenQuest(int getCatMood) {
     }
 
     printf("============ 돌발 퀘스트 종료 ============\n");
-    
+
     sleep(2);
 }
 
