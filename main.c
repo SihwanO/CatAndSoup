@@ -6,13 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h> // 유닉스용 / Windows = Windows.h 필요 || macos = unistd.h
+#include <Windows.h> // 유닉스용 / Windows = Windows.h 필요 || macos = unistd.h
 
 /*
 sleep(5) > Sleep(500)
 sleep(2) > Sleep(2000)
 clear > cls
-scanf > scanf_s
+scanf_s > scanf_s
 */
 
 void getCatIntro(char* getCatName);
@@ -51,8 +51,8 @@ int main(void) {
     srand(time(NULL));
     
     getCatIntro(getCatName);
-    sleep(2); 
-    system("clear");
+    Sleep(2000); 
+    system("cls");
 
     while (1) {
         gameTurn++;
@@ -60,15 +60,15 @@ int main(void) {
         int diceAffinityValue = rand() % 6 + 1;
         posCatDefault = posCatInitval;
         getUserStat(getCatMadeSoupValue, getCpPoint, catAndUserAffinity, diceAffinityValue);
-        sleep(5);
+        Sleep(500);
 
         int diceSoupValue = rand() % 3;
         posCatInitval = getStatsNextCatMoodAction(catAndUserAffinity, diceAffinityValue, posCatInitval, diceSoupValue, getCatMadeSoupValue, purchasedItems, gameHomeTurn);
         printf("\n");
-        sleep(5); 
+        Sleep(500); 
 
         addCatRoom(posCatInitval, posCatDefault);
-        sleep(5);
+        Sleep(500);
         
         int catAndUserBetweenInter = 0;
         int dice = rand() % 6 + 1;
@@ -85,11 +85,11 @@ int main(void) {
 
         if (gameTurn == 3) {
             suddenQuest(getCatMood);
-            sleep(2);
+            Sleep(2000);
         }
 
-        sleep(2); 
-        system("clear");
+        Sleep(2000); 
+        system("cls");
     }
 
     return 0;
@@ -286,7 +286,7 @@ int getUserInput(int dice, int catAndUserBetweenInter, int catAndUserAffinity, i
 
     printf(">> ");
 
-    while (scanf("%d", &catAndUserBetweenInter) != 1 || (catAndUserBetweenInter < 0 || catAndUserBetweenInter >= inputNum)) {
+    while (scanf_s("%d", &catAndUserBetweenInter) != 1 || (catAndUserBetweenInter < 0 || catAndUserBetweenInter >= inputNum)) {
         while (getchar() != '\n');
         printf(">> ");
     }
@@ -379,7 +379,7 @@ int openShop(int getShopChoice, char shopItems[5][40], int itemPrice[5], int pur
     }
     printf(">> ");
 
-    while(scanf("%d", &getShopChoice) != 1 || (getShopChoice < 0 || getShopChoice > 4)) {
+    while(scanf_s("%d", &getShopChoice) != 1 || (getShopChoice < 0 || getShopChoice > 4)) {
         while (getchar() != '\n');
         printf(">> ");
     }
@@ -425,7 +425,7 @@ void suddenQuest(int getCatMood) {
     printf("1. 커튼 뒤\n2. 상자 안\n3. 소파 밑\n");
     printf(">> ");
     
-    while (scanf("%d", &playerGuess) != 1 || (playerGuess < 1 || playerGuess > 3)) {
+    while (scanf_s("%d", &playerGuess) != 1 || (playerGuess < 1 || playerGuess > 3)) {
         while (getchar() != '\n');
         printf(">> ");
     }
@@ -453,7 +453,7 @@ void suddenQuest(int getCatMood) {
 
     printf("============ 돌발 퀘스트 종료 ============\n");
 
-    sleep(2);
+    Sleep(2000);
 }
 
 void addCatRoom(int posCatInitval, int posCatDefault) {
